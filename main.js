@@ -84,7 +84,7 @@
 	function renderLogin(data, into) {
 		//Add the template
 		into.innerHTML=`
-		<h2>Let/*\'*/s login, shall we?</h2>
+		<h2>Lets login, shall we?</h2>
 		<form action=${data.loginToken} method="post">
 		  <button type="submit">Login to Instagram</button>
 		</form>
@@ -254,7 +254,7 @@
 	
 	}	
 	
-	let rating = 4 // from click or firebase
+	let rating = 1 // from click or firebase
 	let maxRating = 5
 	
 	let output = ''
@@ -264,7 +264,7 @@
 	}
 	
 	for (let i = rating + 1; i <= maxRating; i++) {
-	  output += renderBlankStar()
+	  output += renderBlankStar(i)
 	}
 	
 	//into.innerHTML = output
@@ -273,7 +273,7 @@
 	  return `<img src="images/yellowStar.png" />`
 	}
 	
-	function renderBlankStar() {
+	function renderBlankStar(i) {
 	  return `<img src="images/star.png" />`
 	}
 		
@@ -306,23 +306,25 @@
 			<input type="text" id="new-item" />
 			 <button id="add-button">Comment</button>
 			  <ul class="ulContainer">
-				Loading...
+				Leave a comment...
 			   </ul>
 		`
 	}	
 	
 	//render comments ul lists
 	function renderList(state, into) {
-		// Iterate over each element in the object
-		into.innerHTML = Object.keys(state).map((key) => {
-		  return `
-			<li data-id="${key}" ${state[key].done ? "style='text-decoration: line-through'" : ""}>
-			  <input class="done-it" type="checkbox" ${state[key].done ? "checked" : ""} />
-			  ${state[key].title}
-			  <button class="delete">[Delete]</button>
-			</li>
-		  `;
-		}).join('');
+		if(state !== null){
+			// Iterate over each element in the object
+			into.innerHTML = Object.keys(state).map((key) => {
+			  return `
+				<li data-id="${key}" ${state[key].done ? "style='text-decoration: line-through'" : ""}>
+				  <input class="done-it" type="checkbox" ${state[key].done ? "checked" : ""} />
+				  ${state[key].title}
+				  <button class="delete">[Delete]</button>
+				</li>
+			  `;
+			}).join('');
+		}
 	}
 	
 	/*close pop up*/
