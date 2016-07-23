@@ -303,11 +303,22 @@
 			// Pull the list value from firebase
 			state = snapshot.val();
 			// update the comments lists
-			renderList(state, ulContainer)
+			renderList(state, ulContainer);
+			photoOrder(state)
 		});
 			
 	}	
-	
+	function photoOrder(state){
+		var starRatingArray=[]
+		Object.keys(state).map((key) => {
+			var starRating = parseInt(state[key].stars);
+			starRatingArray.push(starRating)
+			
+		})
+		var starRatingTotal= starRatingArray.reduce((a, b) => a + b, 0);
+		console.log(starRatingTotal)
+		
+	}
 	
 	/*render each pop up item*/
 	function renderPopupItem(eachItemData){
