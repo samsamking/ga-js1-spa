@@ -182,6 +182,23 @@
 		return closestItemWithId.getAttribute('data-id');
 	}
 	
+
+	
+	 /**
+     * iterate
+     *
+     * @description A simple iterator used to loop over the stars collection.
+     *   Returns nothing.
+     * @param {Array} collection The collection to be iterated
+     * @param {Function} callback The callback to run on items in the collection
+     */
+    function iterate(collection, callback) {
+      for (var i = 0; i < collection.length; i++) {
+        var item = collection[i];
+        callback(item, i);
+      }
+    }
+
 	//render pop up
 	function renderPopup(data, into){
 		into.innerHTML += `
@@ -193,7 +210,56 @@
 			
 			</div>
 		`
-		var dataCaption = data.caption;
+		
+		
+		
+		var rating=1;
+		var maxRating = 5;
+		var output = '';
+		var starContainer=document.querySelector(".starContainer");
+		var starList=starContainer.getElementsByTagName("li");
+		//var starClass=document.querySelector(".star");
+		
+		for (var i = rating; i <= maxRating; i++) {
+			var dataId = i;
+			renderBlankStar(starContainer)
+			
+		}
+		
+		function renderBlankStar(into) {
+		
+		into.innerHTML += `<li data-id=${dataId} class="star" />`
+	}
+	
+	
+	
+	
+		
+		
+		
+	
+	
+
+		/*click on star*/
+		
+	delegate("body","click",".star",(event) => {
+		
+		rating=parseInt(event.target.getAttribute('data-id'));
+		
+		iterate(starList, function(item, index) {
+			
+          if (index < rating) {
+            item.classList.add('selected');
+          } else {
+            item.classList.remove('selected');
+          }
+        });
+	
+		
+	})	
+	
+	
+	var dataCaption = data.caption;
 		dataCaption = dataCaption.replace(/\s+/g, "");
 		// Clicking to add a new item
 		document.querySelector('#add-button').addEventListener('click', (event) => {
@@ -208,11 +274,16 @@
 		if (!value) {
 			return;
 		}
+		iterate(starList, function(item, index) {
 		
+            item.classList.remove('selected');
+          
+        });
 		//update firebase data
 		firebase.database().ref(`tasks/${dataCaption}/`).push({
 			title: value,
 			done: false,  // Default all tasks to not-done
+			stars: rating
 		});
 		
 		// Reset the input value ready for a new item
@@ -250,33 +321,13 @@
 			// update the comments lists
 			renderList(state, ulContainer)
 		});
+		
+	
 
 	
 	}	
 	
-	let rating = 1 // from click or firebase
-	let maxRating = 5
 	
-	let output = ''
-	
-	for (let i = 1; i <= rating; i++) {
-	  output += renderGoldStar()
-	}
-	
-	for (let i = rating + 1; i <= maxRating; i++) {
-	  output += renderBlankStar(i)
-	}
-	
-	//into.innerHTML = output
-	
-	function renderGoldStar() {
-	  return `<img src="images/yellowStar.png" />`
-	}
-	
-	function renderBlankStar(i) {
-	  return `<img src="images/star.png" />`
-	}
-		
 	/*render each pop up item*/
 	function renderPopupItem(eachItemData){
 		return `
@@ -290,9 +341,8 @@
 					<a href="" class="pop-up-action" target="_blank">Read more from source</a>
 				</div>
 				<div class="comment">
-					<div class="starContainer">
-					${output}
-					</div>
+					<ul class="starContainer">
+					</ul>
 					${renderInput()}
 				</div>
 			</div>
@@ -314,11 +364,31 @@
 	//render comments ul lists
 	function renderList(state, into) {
 		if(state !== null){
+			
+	
+	
 			// Iterate over each element in the object
 			into.innerHTML = Object.keys(state).map((key) => {
+				var rating=state[key].stars;
+				var maxRating = 5;
+								
+				let output = ''
+				
+				for (let i = 1; i <= rating; i++) {
+				  output += renderCommentGoldStar()
+				}
+				
+				for (let i = rating + 1; i <= maxRating; i++) {
+				  output += renderCommentBlankStar()
+				}
+				
+				//into.innerHTML = output
+				
+				
 			  return `
 				<li data-id="${key}" ${state[key].done ? "style='text-decoration: line-through'" : ""}>
 				  <input class="done-it" type="checkbox" ${state[key].done ? "checked" : ""} />
+				  <div class="commentStarContainer">${output}</div>
 				  ${state[key].title}
 				  <button class="delete">[Delete]</button>
 				</li>
@@ -326,7 +396,13 @@
 			}).join('');
 		}
 	}
-	
+	function renderCommentGoldStar() {
+				  return `<img src="images/yellowStar.png" />`
+				}
+				
+				function renderCommentBlankStar() {
+				  return `<img src="images/star.png" />`
+				}
 	/*close pop up*/
 	delegate("body","click",".close-pop-up",(event) => {
 		var popupId=document.querySelector("#pop-up")

@@ -180,3 +180,37 @@ h2 {
 #pop-up .starContainer{
 	margin-bottom:20px;
 }
+.starContainer li{
+	list-style-type:none;
+	float:left;
+}
+
+.starRating {
+ background: url(../images/star.png) no-repeat;
+}
+
+.star {
+   background: url(../images/star.png) no-repeat; 
+   height:50px;
+   width:50px;
+}
+
+.star:hover {
+   background: url(../images/yellowStar.png) no-repeat; 
+   height:50px;
+   width:50px;
+}
+
+.star.selected {
+   background:url(../images/yellowStar.png) no-repeat; 
+   height:50px;
+   width:50px;
+}
+.done-it{
+	width:5%;
+	display:inline-block;
+}
+.commentStarContainer{
+	width:90%;
+	display:inline-block;
+}
