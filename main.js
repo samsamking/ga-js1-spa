@@ -45,7 +45,7 @@
 	}
 	
 	if (state.accessToken ==false /* TODO: did user authorize? */) {
-	renderLogin(state, container)
+		renderLogin(state, container)
 	} else {
 	
 	//Make fetch calls here
@@ -210,9 +210,7 @@
 			
 			</div>
 		`
-		
-		
-		
+				
 		var rating=1;
 		var maxRating = 5;
 		var output = '';
@@ -225,79 +223,65 @@
 			renderBlankStar(starContainer)
 			
 		}
-		
+	
 		function renderBlankStar(into) {
-		
-		into.innerHTML += `<li data-id=${dataId} class="star" />`
-	}
+			into.innerHTML += `<li data-id=${dataId} class="star" />`
+		}
 	
-	
-	
-	
-		
-		
-		
-	
-	
-
 		/*click on star*/
-		
-	delegate("body","click",".star",(event) => {
-		
-		rating=parseInt(event.target.getAttribute('data-id'));
-		
-		iterate(starList, function(item, index) {
+		delegate("body","click",".star",(event) => {
 			
-          if (index < rating) {
-            item.classList.add('selected');
-          } else {
-            item.classList.remove('selected');
-          }
-        });
+			rating=parseInt(event.target.getAttribute('data-id'));
+			
+			iterate(starList, function(item, index) {
+				if (index < rating) {
+					item.classList.add('selected');
+				} else {
+					item.classList.remove('selected');
+				}
+			});
+		})	
 	
 		
-	})	
-	
-	
-	var dataCaption = data.caption;
+		var dataCaption = data.caption;
 		dataCaption = dataCaption.replace(/\s+/g, "");
 		// Clicking to add a new item
 		document.querySelector('#add-button').addEventListener('click', (event) => {
 		
-		// Get the user input
-		let value = document.querySelector('#new-item').value;
-		
-		// Remove whitespace from start and end of input
-		value = value.trim();
-		
-		// Nothing entered, return early from this function
-		if (!value) {
-			return;
-		}
-		iterate(starList, function(item, index) {
-		
-            item.classList.remove('selected');
-          
-        });
-		//update firebase data
-		firebase.database().ref(`tasks/${dataCaption}/`).push({
-			title: value,
-			done: false,  // Default all tasks to not-done
-			stars: rating
-		});
-		
-		// Reset the input value ready for a new item
-		document.querySelector('#new-item').value = '';
+			// Get the user input
+			let value = document.querySelector('#new-item').value;
+			
+			// Remove whitespace from start and end of input
+			value = value.trim();
+			
+			// Nothing entered, return early from this function
+			if (!value) {
+				return;
+			}
+			iterate(starList, function(item, index) {
+			
+				item.classList.remove('selected');
+			  
+			});
+			//update firebase data
+			firebase.database().ref(`tasks/${dataCaption}/`).push({
+				title: value,
+				done: false,  // Default all tasks to not-done
+				stars: rating
+			});
+			
+			// Reset the input value ready for a new item
+			document.querySelector('#new-item').value = '';
 		
 		});
 		
 		// Clicking to delete an item
 		delegate('.comment', 'click', '.delete', (event) => {
 		
-		let key = getKeyFromClosestElement(event.delegateTarget);
-		
-		// Remove that particular key
-		firebase.database().ref(`tasks/${dataCaption}/${key}/`).remove();
+			let key = getKeyFromClosestElement(event.delegateTarget);
+			
+			// Remove that particular key
+			firebase.database().ref(`tasks/${dataCaption}/${key}/`).remove();
 		});
 		
 		// Clicking to do / undo an item
@@ -321,10 +305,7 @@
 			// update the comments lists
 			renderList(state, ulContainer)
 		});
-		
-	
-
-	
+			
 	}	
 	
 	
@@ -354,19 +335,16 @@
 	function renderInput(){
 		return `
 			<input type="text" id="new-item" />
-			 <button id="add-button">Comment</button>
-			  <ul class="ulContainer">
+			<button id="add-button">Comment</button>
+			<ul class="ulContainer">
 				Leave a comment...
-			   </ul>
+			</ul>
 		`
 	}	
 	
 	//render comments ul lists
 	function renderList(state, into) {
 		if(state !== null){
-			
-	
-	
 			// Iterate over each element in the object
 			into.innerHTML = Object.keys(state).map((key) => {
 				var rating=state[key].stars;
@@ -381,9 +359,6 @@
 				for (let i = rating + 1; i <= maxRating; i++) {
 				  output += renderCommentBlankStar()
 				}
-				
-				//into.innerHTML = output
-				
 				
 			  return `
 				<li data-id="${key}" ${state[key].done ? "style='text-decoration: line-through'" : ""}>
@@ -403,6 +378,7 @@
 				function renderCommentBlankStar() {
 				  return `<img src="images/star.png" />`
 				}
+	
 	/*close pop up*/
 	delegate("body","click",".close-pop-up",(event) => {
 		var popupId=document.querySelector("#pop-up")
