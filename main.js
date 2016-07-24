@@ -28,7 +28,7 @@
 	//declare containers
 	var wrapper=document.querySelector(".wrapper");
 	var container = document.querySelector('#container');
-	
+	var header = document.querySelector('header');
 	//store keys
 	var state = { 
 		loginToken: 'https://api.instagram.com/oauth/authorize/?client_id=0ce2e89fe4d4457b948147017fbdff1e&redirect_uri=http://localhost:3000/&response_type=token',
@@ -70,6 +70,8 @@
 					return response.json();
 				}).then((dataAsJson)=>{
 					resultData.weather=dataAsJson.currently.icon;
+					/*calling header*/
+					renderHeader(resultData, header)
 					renderImages(resultData, container)
 					clickImage (resultData)
 				})
@@ -88,6 +90,23 @@
 		<form action=${data.loginToken} method="post">
 		  <button type="submit">Login to Instagram</button>
 		</form>
+		`
+	}
+	
+	/*render header*/	
+	function renderHeader(data, into){
+		into.innerHTML = `
+			<section class="wrapper">
+			  <a href="#" class="home"><h1>Pick me, feed me and never leave me</h1></a>
+			  <nav>
+				<section id="search">
+				  <input type="text" name="name" value="" id="searchArea">
+				  <div id="search-icon"><img src="images/search.png" alt="" /></div>
+				</section>
+				
+			  </nav>
+			  <div class="clearfix"></div>
+			</section>
 		`
 	}
 	
@@ -383,17 +402,17 @@
 		}
 	}
 	function renderCommentGoldStar() {
-				  return `<img src="images/yellowStar.png" />`
+				  return `<img src="images/yellowStarComment.png" />`
 				}
 				
 				function renderCommentBlankStar() {
-				  return `<img src="images/star.png" />`
+				  return `<img src="images/starComment.png" />`
 				}
 	
 	/*close pop up*/
 	delegate("body","click",".close-pop-up",(event) => {
 		var popupId=document.querySelector("#pop-up")
 		popupId.parentNode.removeChild(popupId);
-	})	
+	});
 	
 })();
