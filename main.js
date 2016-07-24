@@ -29,6 +29,8 @@
 	var wrapper=document.querySelector(".wrapper");
 	var container = document.querySelector('#container');
 	var header = document.querySelector('header');
+	var starRatingTotal = 0;
+	var rating =0;
 	//store keys
 	var state = { 
 		loginToken: 'https://api.instagram.com/oauth/authorize/?client_id=0ce2e89fe4d4457b948147017fbdff1e&redirect_uri=http://localhost:3000/&response_type=token',
@@ -41,6 +43,7 @@
 		longitude:'',
 		location:'',
 		caption:''*/
+		animals:[],
 	
 	}
 	
@@ -63,7 +66,7 @@
 				caption:item.caption.text,
 				popup:false,
 			}
-			
+			state.animals.push(resultData);
 				//fetch weather data when the images were loaded
 				fetch(forecastBasUrl +state.theDarkSkyForcastKey+"/"+resultData.latitude+", "+resultData.longitude+", "+resultData.photoTime)
 				.then((response)=>{
@@ -81,7 +84,7 @@
 			console.log('Error!',err);
 		});
 	}
-	
+		
 	//render login
 	function renderLogin(data, into) {
 		//Add the template
@@ -98,13 +101,6 @@
 		into.innerHTML = `
 			<section class="wrapper">
 			  <a href="#" class="home"><h1>Pick me, feed me and never leave me</h1></a>
-			  <nav>
-				<section id="search">
-				  <input type="text" name="name" value="" id="searchArea">
-				  <div id="search-icon"><img src="images/search.png" alt="" /></div>
-				</section>
-				
-			  </nav>
 			  <div class="clearfix"></div>
 			</section>
 		`
@@ -150,7 +146,6 @@
 			 default:
 			  weatherImage= "images/clearDay.png"
 		}
-	
 		//remove the space inbetween words (for matching data-id and data purpose)
 		var dataCaption = data.caption;
 		dataCaption = dataCaption.replace(/\s+/g, "");
@@ -170,6 +165,57 @@
 				</div>
 			</div>
 		`
+		
+		firebase.database().ref(`tasks/${dataCaption}/`).on('value', function(snapshot) {
+			// Pull the list value from firebase
+			state = snapshot.val();
+			
+			if(state != null){
+				Object.keys(state).map((key) => {
+					var topRating = state[key].total;
+					var animalData=state[key];
+					//console.log(state[key])
+					var stateNew=[];
+					stateNew.push(state[key]);
+					//console.log(stateNew)
+					stateNew=stateNew.sort(function (a, b) {
+					  if (a.total > b.total) {
+						return 1;
+					  }
+					  if (a.total < b.total) {
+						return -1;
+					  }
+					  // a must be equal to b
+					  return 0;
+					});
+					
+					//console.log(stateNew)
+					
+					/*var items = [
+					  { name: 'Edward', value: 21 },
+					  { name: 'Sharpe', value: 37 },
+					  { name: 'And', value: 45 },
+					  { name: 'The', value: -12 },
+					  { name: 'Magnetic' },
+					  { name: 'Zeros', value: 37 }
+					];
+					// sort by value
+					items=items.sort(function (a, b) {
+					  if (a.value > b.value) {
+						return 1;
+					  }
+					  if (a.value < b.value) {
+						return -1;
+					  }
+					  // a must be equal to b
+					  return 0;
+					});
+					
+					console.dir(items)*/
+					
+				})
+			}
+		})
 	}
 
 	//click image pop up function
@@ -282,11 +328,14 @@
 				item.classList.remove('selected');
 			  
 			});
+			
 			//update firebase data
 			firebase.database().ref(`tasks/${dataCaption}/`).push({
+				name: dataCaption,
 				title: value,
 				done: false,  // Default all tasks to not-done
-				stars: rating
+				stars: rating,
+				total:starRatingTotal + rating
 			});
 			
 			// Reset the input value ready for a new item
@@ -321,23 +370,38 @@
 		
 			// Pull the list value from firebase
 			state = snapshot.val();
+			
+			
 			// update the comments lists
 			renderList(state, ulContainer);
-			photoOrder(state)
+			
+			var starRatingArray=[]
+			if(state != null){
+				Object.keys(state).map((key) => {
+					var starRating = parseInt(state[key].stars);
+					starRatingArray.push(starRating)
+					
+				})
+			}
+			
+			starRatingTotal = starRatingArray.reduce((a, b) => a + b, 0);
+			
+			/*clickedAnimal ={}
+			if(state != null){
+				Object.keys(state).map((key) => {
+					var animalName = state[key].name;
+					
+					clickedAnimal.animalName=starRatingTotal
+					
+				})
+			}*/
+			
+			rating=0;
+			
 		});
 			
 	}	
-	function photoOrder(state){
-		var starRatingArray=[]
-		Object.keys(state).map((key) => {
-			var starRating = parseInt(state[key].stars);
-			starRatingArray.push(starRating)
-			
-		})
-		var starRatingTotal= starRatingArray.reduce((a, b) => a + b, 0);
-		console.log(starRatingTotal)
-		
-	}
+	
 	
 	/*render each pop up item*/
 	function renderPopupItem(eachItemData){
@@ -349,7 +413,6 @@
 				<div class="content">
 					<h1>${eachItemData.caption}</h1>
 					<p>${eachItemData.location}</p>
-					<a href="" class="pop-up-action" target="_blank">Read more from source</a>
 				</div>
 				<div class="comment">
 					<ul class="starContainer">
