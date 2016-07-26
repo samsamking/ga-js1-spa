@@ -89,6 +89,7 @@
 		});
 	}
 		
+	//declare functions
 	//render login
 	function renderLogin(data, into) {
 		//Add the template
@@ -207,11 +208,10 @@
 		
 	 /**
      * iterate
-     *
-     * @description A simple iterator used to loop over the stars collection.
-     *   Returns nothing.
-     * @param {Array} collection The collection to be iterated
-     * @param {Function} callback The callback to run on items in the collection
+     * A simple iterator used to loop over the stars collection.
+     * Returns nothing.
+     * {Array} collection The collection to be iterated
+     * {Function} callback The callback to run on items in the collection
      */
     function iterate(collection, callback) {
       for (var i = 0; i < collection.length; i++) {
@@ -410,10 +410,12 @@
 			
 			//if the data exists render the comment lists
 			if(exists){
+				
+				var stateComments=state.comments;
+				
 				// update the comments lists
 				renderTotalScore(state, totalScoreContainer);
 				renderList(state, ulContainer);
-				var stateComments=state.comments;
 				
 				//get how many stars for that committed comments
 				Object.keys(stateComments).map((key) => {
@@ -422,13 +424,8 @@
 					
 				})
 				
+				//get total star ratings
 				starRatingTotal = starRatingArray.reduce((a, b) => a + b, 0);
-				
-				/*Object.keys(state).map((key) => {
-					var animalName = state[key].name;
-					clickedAnimal.animalName=starRatingTotal
-					
-				})*/
 			
 			//if no comment data exists render the empty list	
 			}else{
@@ -442,13 +439,7 @@
 		});
 			
 	}	
-	
-	/*close pop up*/
-	delegate("body","click",".close-pop-up",(event) => {
-		var popupId=document.querySelector("#pop-up")
-		popupId.parentNode.removeChild(popupId);
-	});
-	
+		
 	/*render each pop up item*/
 	function renderPopupItem(eachItemData){
 		return `
@@ -490,7 +481,10 @@
 		if (stateTotal !== null || stateTotal !== 0){
 			into.innerHTML=	
 			Object.keys(stateTotal).map((key) => {
+				
 					var total=stateTotal[key];
+					
+					//change total score words and gifs based on the score gained
 					if (total <= 5){
 					return `<p>I have only ${total} stars, pick me please!</p>
 							<img src="images/pickMe.gif" alt="pick me" style="width:246px;height:205px;">
@@ -527,18 +521,21 @@
 			}).join('')
 		}
 	}
-	//render leave a comment if no comments
+	
+	//render 'leave a comment' if no comments
 	function renderEmptyTotalScore(into) {
 			  into.innerHTML= `
 			  `
 	}
+	
 	//render comments ul lists
 	function renderList(state, into) {
+		
 			// Iterate over each element in the object
 			if (state !== null){
 				var stateComments=state.comments;
 				
-				// get data to decide how many stars for each comment
+				// get how many stars for each comment
 				into.innerHTML = 
 				Object.keys(stateComments).map((key) => {
 					var rating=stateComments[key].stars;
@@ -555,10 +552,9 @@
 						output += renderCommentBlankStar()
 					}
 					
-					//create the comments html
+					//create the comments list
 					return `
 					<li data-id="${key}">
-						
 						<input class="done-it" type="checkbox" ${stateComments[key].done ? "checked" : ""} />
 						<div class="commentStarContainer">${output}</div>
 						${stateComments[key].comment}
@@ -572,7 +568,8 @@
 			}
 	
 	}
-	//render leave a comment if no comments
+	
+	//render 'leave a comment' if no comments
 	function renderEmptyList(into) {
 			  into.innerHTML= `
 			  	Leave a comment...
@@ -588,5 +585,11 @@
 	function renderCommentBlankStar() {
 		return `<img src="images/starComment.png" />`
 	}
+	
+	/*close pop up*/
+	delegate("body","click",".close-pop-up",(event) => {
+		var popupId=document.querySelector("#pop-up")
+		popupId.parentNode.removeChild(popupId);
+	});
 		
 })();
