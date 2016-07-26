@@ -227,7 +227,6 @@
 					<div class="wrapper">
 						${renderPopupItem(data)}
 					</div>
-			
 			</div>
 		`
 		// declare variables		
@@ -240,7 +239,6 @@
 		dataCaption = dataCaption.replace(/\s+/g, "");
 		var ulContainer =document.querySelector(".ulContainer");
 		var totalScoreContainer =document.querySelector(".totalScore");
-
 		
 		//render blank stars funtion, it has to stay here to get dataId
 		function renderBlankStar(into) {
@@ -251,7 +249,6 @@
 		for (var i = rating; i <= maxRating; i++) {
 			var dataId = i;
 			renderBlankStar(starContainer)
-			
 		}
 		
 		/*click on star and add class*/
@@ -267,7 +264,6 @@
 				}
 			});
 		})	
-	
 		
 		// Clicking to add a new item
 		document.querySelector('#add-button').addEventListener('click', (event) => {
