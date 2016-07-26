@@ -33,7 +33,7 @@
 	var rating =0;
 	//store keys
 	var state = { 
-		loginToken: 'https://api.instagram.com/oauth/authorize/?client_id=0ce2e89fe4d4457b948147017fbdff1e&redirect_uri=http://localhost:3000/&response_type=token',
+		loginToken: 'https://api.instagram.com/oauth/authorize/?client_id=0ce2e89fe4d4457b948147017fbdff1e&redirect_uri=https://samsamking.github.io/ga-js1-spa/&response_type=token',
 		accessToken:window.location.hash.split("=").pop(),
 		/*imageUrl:'',
 		weather:'',*/
