@@ -44,7 +44,6 @@
 		location:'',
 		caption:''*/
 		animals:[],
-	
 	}
 	
 	if (state.accessToken ==false /* Did user authorize? */) {
