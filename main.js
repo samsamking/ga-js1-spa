@@ -161,7 +161,7 @@
 				  <img src=${data.imageUrl} class="clickMe"/>
 				 </div>
 				 <div class="description">
-				  <div class="leftCol"><img src=${weatherImage}/></div>
+				  <div class="leftCol"><img src=${weatherImage} /></div>
 				  <div class="rightCol">
 					<ul class="ulClass">
 						<li>Where: ${data.location}</li>
