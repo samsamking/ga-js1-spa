@@ -6,7 +6,7 @@
  */
 
 (function() {
-	//declare fetch data urls
+	//declare fetch data urls - forecast and instagram
 	var forecastBasUrl = 'https://crossorigin.me/https://api.forecast.io/forecast/'
 	var instagramBasUrl = 'https://crossorigin.me/https://api.instagram.com/v1/' 
 	
@@ -47,16 +47,16 @@
 	
 	}
 	
-	if (state.accessToken ==false /* TODO: did user authorize? */) {
+	if (state.accessToken ==false /* Did user authorize? */) {
 		renderLogin(state, container)
-	} else {
-	
+	} else {	
 	//Make fetch calls here
 	fetch(instagramBasUrl +'users/self/media/recent/?access_token='+ state.accessToken)
 		.then((response)=>{
 			return response.json();
 		}).then((dataAsJson)=>{
 			dataAsJson.data.forEach((item) => {
+			//declare instagram data
 			var resultData = {
 				imageUrl: item.images.standard_resolution.url,
 				photoTime: item.created_time,
@@ -75,7 +75,11 @@
 					resultData.weather=dataAsJson.currently.icon;
 					/*calling header*/
 					renderHeader(resultData, header)
+					
+					/*calling images*/
 					renderImages(resultData, container)
+					
+					/*calling image click function*/
 					clickImage (resultData)
 				})
 			});
@@ -108,8 +112,12 @@
 	
 	//render all the images
 	function renderImages(data, into) {
-		// add the template
+		//declare variables
 		var weather=data.weather;
+		//remove the space inbetween words (for matching data-id and data purpose)
+		var dataCaption = data.caption;
+		dataCaption = dataCaption.replace(/\s+/g, "");
+		
 		//switch weather icon based on the weather data
 		switch(weather.toLowerCase()) {
 			case "clear-day":
@@ -142,13 +150,11 @@
 			case "partly-cloudy-night":
 			  weatherImage= "images/cloudyNight.png"
 			  break;
-			// add the default keyword here
 			 default:
 			  weatherImage= "images/clearDay.png"
 		}
-		//remove the space inbetween words (for matching data-id and data purpose)
-		var dataCaption = data.caption;
-		dataCaption = dataCaption.replace(/\s+/g, "");
+	
+		// add the template
 		into.innerHTML  += `
 			<div class="eachItem" data-id=${dataCaption}>
 				<div class="polaroid">
@@ -165,57 +171,6 @@
 				</div>
 			</div>
 		`
-		
-		firebase.database().ref(`tasks/${dataCaption}/`).on('value', function(snapshot) {
-			// Pull the list value from firebase
-			state = snapshot.val();
-			
-			if(state != null){
-				Object.keys(state).map((key) => {
-					var topRating = state[key].total;
-					var animalData=state[key];
-					//console.log(state[key])
-					var stateNew=[];
-					stateNew.push(state[key]);
-					//console.log(stateNew)
-					stateNew=stateNew.sort(function (a, b) {
-					  if (a.total > b.total) {
-						return 1;
-					  }
-					  if (a.total < b.total) {
-						return -1;
-					  }
-					  // a must be equal to b
-					  return 0;
-					});
-					
-					//console.log(stateNew)
-					
-					/*var items = [
-					  { name: 'Edward', value: 21 },
-					  { name: 'Sharpe', value: 37 },
-					  { name: 'And', value: 45 },
-					  { name: 'The', value: -12 },
-					  { name: 'Magnetic' },
-					  { name: 'Zeros', value: 37 }
-					];
-					// sort by value
-					items=items.sort(function (a, b) {
-					  if (a.value > b.value) {
-						return 1;
-					  }
-					  if (a.value < b.value) {
-						return -1;
-					  }
-					  // a must be equal to b
-					  return 0;
-					});
-					
-					console.dir(items)*/
-					
-				})
-			}
-		})
 	}
 
 	//click image pop up function
@@ -227,6 +182,8 @@
 			var dataCaptionId=getKeyFromClosestElement(event.delegateTarget);
 			var dataCaption = data.caption;
 			dataCaption = dataCaption.replace(/\s+/g, "");
+			
+			//match the id and render pop up with the data
 			if (dataCaption == dataCaptionId){
 				renderPopup(data, container) 
 			}
@@ -234,8 +191,9 @@
 		});
 	}
 	
-	// We added the `data-id` attribute when we rendered the items
+	// added the `data-id` attribute when we rendered the items
 	function getKeyFromClosestElement(element) {
+		
 		// Search for the closest parent that has an attribute `data-id`
 		let closestItemWithId = closest(event.delegateTarget, '[data-id]')
 		
@@ -246,9 +204,7 @@
 		// Extract and return that attribute
 		return closestItemWithId.getAttribute('data-id');
 	}
-	
-
-	
+		
 	 /**
      * iterate
      *
@@ -275,25 +231,31 @@
 			
 			</div>
 		`
-				
+		// declare variables		
 		var rating=1;
 		var maxRating = 5;
 		var output = '';
 		var starContainer=document.querySelector(".starContainer");
 		var starList=starContainer.getElementsByTagName("li");
-		//var starClass=document.querySelector(".star");
+		var dataCaption = data.caption;
+		dataCaption = dataCaption.replace(/\s+/g, "");
+		var ulContainer =document.querySelector(".ulContainer");
+		var totalScoreContainer =document.querySelector(".totalScore");
+
 		
+		//render blank stars funtion, it has to stay here to get dataId
+		function renderBlankStar(into) {
+			into.innerHTML += `<li data-id=${dataId} class="star" />`
+		}
+		
+		//for loop to loop through ratings, and render pop up blank stars
 		for (var i = rating; i <= maxRating; i++) {
 			var dataId = i;
 			renderBlankStar(starContainer)
 			
 		}
-	
-		function renderBlankStar(into) {
-			into.innerHTML += `<li data-id=${dataId} class="star" />`
-		}
-	
-		/*click on star*/
+		
+		/*click on star and add class*/
 		delegate("body","click",".star",(event) => {
 			
 			rating=parseInt(event.target.getAttribute('data-id'));
@@ -308,8 +270,6 @@
 		})	
 	
 		
-		var dataCaption = data.caption;
-		dataCaption = dataCaption.replace(/\s+/g, "");
 		// Clicking to add a new item
 		document.querySelector('#add-button').addEventListener('click', (event) => {
 		
@@ -323,6 +283,8 @@
 			if (!value) {
 				return;
 			}
+			
+			//remove selected class after it has been submitted
 			iterate(starList, function(item, index) {
 			
 				item.classList.remove('selected');
@@ -330,13 +292,18 @@
 			});
 			
 			//update firebase data
-			firebase.database().ref(`tasks/${dataCaption}/`).push({
+			firebase.database().ref(`tasks/${dataCaption}/comments/`).push({
 				name: dataCaption,
-				title: value,
+				comment: value,
 				done: false,  // Default all tasks to not-done
 				stars: rating,
+			});
+			
+			//update firebase total rating data for each animal
+			firebase.database().ref(`tasks/${dataCaption}/totalRating/`).set({
 				total:starRatingTotal + rating
 			});
+			starRatingTotal=0;
 			
 			// Reset the input value ready for a new item
 			document.querySelector('#new-item').value = '';
@@ -345,11 +312,79 @@
 		
 		// Clicking to delete an item
 		delegate('.comment', 'click', '.delete', (event) => {
-		
-			let key = getKeyFromClosestElement(event.delegateTarget);
 			
-			// Remove that particular key
-			firebase.database().ref(`tasks/${dataCaption}/${key}/`).remove();
+			//declare variables
+			let key = getKeyFromClosestElement(event.delegateTarget);
+			var deletedStars =0;
+			var totalStars=0;
+			
+			//get total rating/stars for each animal
+			firebase.database().ref(`tasks/${dataCaption}/totalRating/`).on('value', function(snapshot) {
+				// Pull the totalRating value from firebase
+				totalRating = snapshot.val();
+				var totalRatingExists=snapshot.exists();
+				
+				//check if data exists then get total
+				if (totalRatingExists){
+					totalStars=totalRating.total;
+				}
+				
+			});
+			
+			// Remove that particular key for the animal
+			firebase.database().ref(`tasks/${dataCaption}/comments/${key}/`).remove();
+			
+			//add total stars from each comment for that animal
+			firebase.database().ref(`tasks/${dataCaption}/comments/`).on('value', function(snapshot) {
+				
+				// Pull the data after some has been deleted from firebase
+				leftData = snapshot.val();
+				var leftDataExists=snapshot.exists();
+				//if there is comment data left after the last delete
+				if (leftDataExists){
+					var totalAddedStars=0;
+					Object.keys(leftData).map((key) => {
+						var stars = parseInt(leftData[key].stars);
+						totalAddedStars +=stars;
+					})
+					
+					//update totalRating after adding all the stars from each comment
+					firebase.database().ref(`tasks/${dataCaption}/totalRating/`).update({
+							total:totalAddedStars
+					})
+					
+				}else{
+					//remove the totalRating if there is no other comments
+					firebase.database().ref(`tasks/${dataCaption}/totalRating/`).remove();
+				}
+			
+			});
+		
+		});
+		
+		// Clicking to edit an item
+		delegate('.comment', 'click', '.update', (event) => {
+			
+			//declare variables
+			var key = getKeyFromClosestElement(event.delegateTarget);
+			var itemId=document.querySelector(key);
+			var el=closest(event.delegateTarget,'[data-id]')
+			var id=el.getAttribute('data-id');
+			var newValue=el.querySelector(".edit-item").value;
+
+			// Remove whitespace from start and end of input
+			newValue = newValue.trim();
+			
+			// Nothing entered, return early from this function
+			if (!newValue) {
+				return;
+			}
+			
+			// Update the `comment` value of that particular key to be the new comment from the `<input>` box.
+			firebase.database().ref(`tasks/${dataCaption}/comments/${key}/`).update({
+				comment: newValue
+			});			
+			
 		});
 		
 		// Clicking to do / undo an item
@@ -358,50 +393,61 @@
 			let key = getKeyFromClosestElement(event.delegateTarget);
 			// Update the `done` value of that particular key to be the `checked` state of
 			// the `<input>` checkbox.
-			firebase.database().ref(`tasks/${dataCaption}/${key}/`).update({
+			firebase.database().ref(`tasks/${dataCaption}/comments/${key}/`).update({
 				done: event.delegateTarget.checked
 			});
 		});
 		
-		var ulContainer =document.querySelector(".ulContainer");
 		// Whenever a new value is received from Firebase (once at initial page load,
 		// then every time something changes)
 		firebase.database().ref(`tasks/${dataCaption}/`).on('value', function(snapshot) {
 		
-			// Pull the list value from firebase
+			// Pull the value from firebase
 			state = snapshot.val();
+			var exists=snapshot.exists();
+			var starRatingArray=[];
+			clickedAnimal ={}
 			
-			
-			// update the comments lists
-			renderList(state, ulContainer);
-			
-			var starRatingArray=[]
-			if(state != null){
-				Object.keys(state).map((key) => {
-					var starRating = parseInt(state[key].stars);
+			//if the data exists render the comment lists
+			if(exists){
+				// update the comments lists
+				renderTotalScore(state, totalScoreContainer);
+				renderList(state, ulContainer);
+				var stateComments=state.comments;
+				
+				//get how many stars for that committed comments
+				Object.keys(stateComments).map((key) => {
+					var starRating = parseInt(stateComments[key].stars);
 					starRatingArray.push(starRating)
 					
 				})
-			}
-			
-			starRatingTotal = starRatingArray.reduce((a, b) => a + b, 0);
-			
-			/*clickedAnimal ={}
-			if(state != null){
-				Object.keys(state).map((key) => {
+				
+				starRatingTotal = starRatingArray.reduce((a, b) => a + b, 0);
+				
+				/*Object.keys(state).map((key) => {
 					var animalName = state[key].name;
-					
 					clickedAnimal.animalName=starRatingTotal
 					
-				})
-			}*/
+				})*/
 			
+			//if no comment data exists render the empty list	
+			}else{
+				renderEmptyTotalScore(totalScoreContainer)
+				renderEmptyList(ulContainer);
+			}			
+			
+			//set rating to 0 to start again
 			rating=0;
 			
 		});
 			
 	}	
 	
+	/*close pop up*/
+	delegate("body","click",".close-pop-up",(event) => {
+		var popupId=document.querySelector("#pop-up")
+		popupId.parentNode.removeChild(popupId);
+	});
 	
 	/*render each pop up item*/
 	function renderPopupItem(eachItemData){
@@ -415,13 +461,14 @@
 					<p>${eachItemData.location}</p>
 				</div>
 				<div class="comment">
+					<p>Leave me a message, and make me shine.</p>
 					<ul class="starContainer">
 					</ul>
 					${renderInput()}
+					
 				</div>
 			</div>
 		`
-		//var starContainer=document.querySelector(".starContainer");
 	}	
 	
 	/*render input button area*/
@@ -429,53 +476,117 @@
 		return `
 			<input type="text" id="new-item" />
 			<button id="add-button">Comment</button>
+			<div class="totalScore"></div>
 			<ul class="ulContainer">
 				Leave a comment...
 			</ul>
 		`
 	}	
 	
-	//render comments ul lists
-	function renderList(state, into) {
-		if(state !== null){
-			// Iterate over each element in the object
-			into.innerHTML = Object.keys(state).map((key) => {
-				var rating=state[key].stars;
-				var maxRating = 5;
-								
-				let output = ''
-				
-				for (let i = 1; i <= rating; i++) {
-				  output += renderCommentGoldStar()
-				}
-				
-				for (let i = rating + 1; i <= maxRating; i++) {
-				  output += renderCommentBlankStar()
-				}
-				
-			  return `
-				<li data-id="${key}" ${state[key].done ? "style='text-decoration: line-through'" : ""}>
-				  <input class="done-it" type="checkbox" ${state[key].done ? "checked" : ""} />
-				  <div class="commentStarContainer">${output}</div>
-				  ${state[key].title}
-				  <button class="delete">[Delete]</button>
-				</li>
-			  `;
-			}).join('');
+	/*render total score*/
+	function renderTotalScore(state, into){
+		var stateTotal=state.totalRating;
+		
+		if (stateTotal !== null || stateTotal !== 0){
+			into.innerHTML=	
+			Object.keys(stateTotal).map((key) => {
+					var total=stateTotal[key];
+					if (total <= 5){
+					return `<p>I have only ${total} stars, pick me please!</p>
+							<img src="images/pickMe.gif" alt="pick me" style="width:246px;height:205px;">
+					`
+					}else if (total > 5 && total <=10){
+						return `<p>I have ${total} stars, want to see me dance?</p>
+								<img src="images/dancing.gif" alt="dance" style="width:250px;height:124px;">
+						`
+					}else if (total > 10 && total <=15){
+						return `<p>Yeehaa ${total} stars achieved, I need more to shine.</p>
+								<img src="images/shine.gif" alt="shine" style="width:250px;height:125px;">
+						`
+					}else if (total > 15 && total <=20){
+						return `<p>Yeah ${total} stars, I am running.</p>
+								<img src="images/running.gif" alt="running" style="width:256px;height:256px;">
+						`
+					}else if (total > 20 && total <=30){
+						return `<p>Woohoo ${total} stars, arent we better together?</p>
+								<img src="images/together.gif" alt="together" style="width:240px;height:135px;">
+						`
+					}else if (total > 30 && total <=40){
+						return `<p>Wow ${total} stars, love you.</p>
+								<img src="images/love.gif" alt="love" style="width:250px;height:198px;">
+						`
+					}else if (total > 40 && total <=50){
+						return `<p>I have ${total} stars, you made me smile.</p>
+								<img src="images/smile.gif" alt="smile" style="width:240px;height:132px;">
+						`
+					}else {
+						return `<p>I have ${total} stars, you made me a star!</p>
+								<img src="images/stars.gif" alt="star" style="width:250px;height:139px;">
+						`
+					}
+			}).join('')
 		}
 	}
-	function renderCommentGoldStar() {
-				  return `<img src="images/yellowStarComment.png" />`
-				}
+	//render leave a comment if no comments
+	function renderEmptyTotalScore(into) {
+			  into.innerHTML= `
+			  `
+	}
+	//render comments ul lists
+	function renderList(state, into) {
+			// Iterate over each element in the object
+			if (state !== null){
+				var stateComments=state.comments;
 				
-				function renderCommentBlankStar() {
-				  return `<img src="images/starComment.png" />`
-				}
+				// get data to decide how many stars for each comment
+				into.innerHTML = 
+				Object.keys(stateComments).map((key) => {
+					var rating=stateComments[key].stars;
+					var maxRating = 5;
+					var output = ''
+					
+					// render how many gold stars after the committed comment
+					for (let i = 1; i <= rating; i++) {
+						output += renderCommentGoldStar()
+					}
+					
+					// render how many blank stars after the committed comment
+					for (let i = rating + 1; i <= maxRating; i++) {
+						output += renderCommentBlankStar()
+					}
+					
+					//create the comments html
+					return `
+					<li data-id="${key}">
+						
+						<input class="done-it" type="checkbox" ${stateComments[key].done ? "checked" : ""} />
+						<div class="commentStarContainer">${output}</div>
+						${stateComments[key].comment}
+						<button class="delete">Delete</button>
+						<button class="update">Update</button>
+						<p class="instruction">Edit comment below, and click the update button</p>
+						<input type="text" class="edit-item shown"/>
+					</li>
+					`
+				}).join('');
+			}
 	
-	/*close pop up*/
-	delegate("body","click",".close-pop-up",(event) => {
-		var popupId=document.querySelector("#pop-up")
-		popupId.parentNode.removeChild(popupId);
-	});
+	}
+	//render leave a comment if no comments
+	function renderEmptyList(into) {
+			  into.innerHTML= `
+			  	Leave a comment...
+			  `
+	}
 	
+	//render gold stars for each comment
+	function renderCommentGoldStar() {
+		return `<img src="images/yellowStarComment.png" />`
+	}
+	
+	//render blank stars for each comment
+	function renderCommentBlankStar() {
+		return `<img src="images/starComment.png" />`
+	}
+		
 })();
