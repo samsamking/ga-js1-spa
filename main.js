@@ -70,7 +70,10 @@
 					.then((response)=>{
 						return response.json();
 					}).then((dataAsJson)=>{
+						
+						//weather data
 						resultData.weather=dataAsJson.currently.icon;
+						
 						/*calling header*/
 						renderHeader(resultData, header)
 						
@@ -79,6 +82,7 @@
 						
 						/*calling image click function*/
 						clickImage (resultData)
+						
 					})
 				});
 				

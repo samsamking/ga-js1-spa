@@ -43,72 +43,9 @@ body {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  
   margin-top: 70px;
 }
-.eachItem {
-  margin: 1em;
-  width: 256px;
-  /*text-align: center;*/
-  font-size: 0.9em;
-  line-height: 1.4em;
-  /*font-weight: bold;*/
-}
-.polaroid img {
-  width: 256px;
-  height: 286px;
-}
 
-.polaroid {
-  position: relative;
- 
-}
- 
-.polaroid img {
-  border: 10px solid #fff;
-  border-bottom: 45px solid #fff;
-  -webkit-box-shadow: 3px 3px 8px #777;
-     -moz-box-shadow: 3px 3px 8px #777;
-          box-shadow: 3px 3px 8px #777;
-}
-.eachItem .polaroid img:hover {
- opacity:0.7;
- cursor:pointer;
-}
- 
-.polaroid p {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  bottom: 0px;
-  font: 400 18px/1 'Kaushan Script', cursive;
-  color: #888;
-}
-.leftCol img{
-	width:50px;
-	height:50px;
-	position:relative;
-	margin:10px 0 0 0;
-	
-}
-.leftCol{
-	width:24%;
-	float:left;
-}
-.rightCol{
-	width:74%;
-	float:left;
-}
-ul.ulClass{
-	list-style-type:none;
-	
-
-	padding:0 0 3px 0;
-}
-
-.description{
-	clear:both;
-}
 h1 {
   margin: 0;
   /*text-align: center;*/
@@ -117,15 +54,8 @@ h2 {
   width: 100%;
   text-align: center;
 }
-.imageLeftCol{
-	width:40%;
-	float:left;
-}
-.imageRightCol{
-	width:55%;
-	float:left;
-}
 
+/*pop up*/
 #pop-up {
   position: fixed;
   top: 30px;
@@ -186,13 +116,99 @@ h2 {
   color: #fff;
   opacity:0.7;
 }
+
 #pop-up .content{
 	margin-bottom:20px;
 }
+
 #pop-up .starContainer{
 	margin:10px 0;
 	height:40px;
 }
+
+/*Each Image item*/
+.eachItem {
+  margin: 1em;
+  width: 256px;
+  /*text-align: center;*/
+  font-size: 0.9em;
+  line-height: 1.4em;
+  /*font-weight: bold;*/
+}
+
+/*add polaroid*/
+.polaroid img {
+  width: 256px;
+  height: 286px;
+}
+
+.polaroid {
+  position: relative;
+ 
+}
+ 
+.polaroid img {
+  border: 10px solid #fff;
+  border-bottom: 45px solid #fff;
+  -webkit-box-shadow: 3px 3px 8px #777;
+  -moz-box-shadow: 3px 3px 8px #777;
+  box-shadow: 3px 3px 8px #777;
+}
+
+.eachItem .polaroid img:hover {
+ opacity:0.7;
+ cursor:pointer;
+}
+ 
+.polaroid p {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  bottom: 0px;
+  font: 400 18px/1 'Kaushan Script', cursive;
+  color: #888;
+}
+
+/*image on the left*/
+.leftCol img{
+	width:50px;
+	height:50px;
+	position:relative;
+	margin:10px 0 0 0;
+}
+
+/*left and right cols*/
+.leftCol{
+	width:24%;
+	float:left;
+}
+
+.rightCol{
+	width:74%;
+	float:left;
+}
+
+.imageLeftCol{
+	width:40%;
+	float:left;
+}
+
+.imageRightCol{
+	width:55%;
+	float:left;
+}
+
+.description{
+	clear:both;
+}
+
+/*ul with ulClass*/
+ul.ulClass{
+	list-style-type:none;
+	padding:0 0 3px 0;
+}
+
+/*star rating css*/
 .starContainer li{
 	list-style-type:none;
 	float:left;
@@ -219,10 +235,12 @@ h2 {
    height:40px;
    width:40px;
 }
+
 .done-it{
 	width:5%;
 	display:inline-block;
 }
+
 .commentStarContainer{
 	height:30px;
 	width:92%;
@@ -306,6 +324,7 @@ header nav a:hover {
   color: #CC0020;
 }
 
+/*nav*/
 nav ul {
   float: right;
   padding:0;
@@ -333,9 +352,6 @@ ul{
 	padding-left:0px;
 }
 
-/*.edit-item{
-	margin-top:15px;
-}*/
 .totalScore p{
 	font-weight:bold;
 }

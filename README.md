@@ -4,13 +4,13 @@ This project is to build a web app by Sam, where I will use my Javascript knowle
 
 ### What is my idea?
 
-Let's talk about the cute Animals, even better Aussie animals. We are so lucky to have a huge range of native animals living here with us, they make money for us, they bring in tourists for us, they act cute just to make our life better, so there is no reason we don't protect them, some of them will be gone if we don't do anything.
+Let's talk about the cute Animals, even better Aussie animals. We are so lucky to have a huge range of native animals living here with us, they make money for us, they bring in tourists for us, they act cute just to make our life better. So there is no reason we shouldn't protect them, some of them will be gone if we don't do anything now.
 
-That's where my idea came through. Many individuals, companies, charities around the world would like to contribut money to those adorable Aussie animals, to love them, to save them, to feed them, but there are many needed animals, who do we choose each month? So it will be your money and your choice.
+That's where my idea came through. Many individuals, companies, charities around the world would like to contribute money to those adorable Aussie animals. We want to love them, to save them, and to feed them, but there are many needed animals, who do we choose each month? So it will be your money and your choice.
 
-Users can come to my SPA to make decisions on which animal(s) they would like to protect this month, the top three will get the contributions from all those lovely people who voted.
+Users can come to my App to make decisions on which animal(s) they would like to protect this month, the top three will get the contributions from all those lovely people who voted.
 
-Those three has been helped this month won't be in the run for next three months, to give others a fair chance, so everybody is a winner.
+Those three who has been helped this month won't be in the run for next three months, to give others a fair chance, so everybody is a winner.
 
 
 ### How does my SPA function?
@@ -19,11 +19,11 @@ Those three has been helped this month won't be in the run for next three months
 2. It will display names and where those animals are from
 3. Based on the location, it will tell you the weather in that location at the time (fetch data from the Dark Sky Forecast API)
 4. Based on the weather received, it will display a related weather icon to be more visible/interesting
-5. When user clicks on each animal/image, a pop up of the clicked animal will show
-5. User can vote for the animal(s) they like with star rating system, and create a comment
-6. The voted stars and comments will show below for users to read
-6. User can edit comment(s) they submitted, also they can delete the comment(s)
-7. Based on the total stars the animal got from the users' inpput, it will tell you how many scores the animal has got so far
+5. When users click on each animal/image, a pop up of the clicked animal will show
+5. Users can vote for the animal(s) they like using a star rating system, and they can create a comment
+6. The rated stars and comments will show below for users to read
+6. Users can edit comment(s) they submitted, also they can delete the comment(s)
+7. Based on the total stars the animal got from all the users' inpput, it will tell you how many scores the animal has got so far
 8. Different overall comment will present based on the total score scale and a related gif will show
 9. All the user interaction/comment data is stored in Firebase
 10. It is hosted on github https://samsamking.github.io/ga-js1-spa/
@@ -33,11 +33,18 @@ Those three has been helped this month won't be in the run for next three months
 1. I did multiple searches. I started with fetching data from other servers, and structuring the DOM in JS
 2. Get data from user input, and store the data into Firebase
 3. Fetch the user input data needed, it was a matter of how to store the data, how to fit it into the DOM
-4. Writing down pseudocode is helpful, but there were unexpected things during the process, then more planning was needed
+4. Writing down pseudocode is helpful, there were unexpected things during the process, then more planning was needed
 5. Testing small pieces of functionality frequently as suggested by Jess
 6. "Google is your friend" when my code was not working
 7. I got stuck, I got fustrated, but just kept trying, The wall will collapse if you just keep knocking on it
 8. It is a great feeling to see it is all working in the end
+
+### what you'd like to do next with your app?
+
+1. Take Instagram out of my app, using a databse to store the image eg Firebase, so I have more control over the data
+2. Render the animal images based on the total rating scores, the score data is in the Firebase already
+3. Users have to login to comment, so we will have their data
+
 
 
 ### Instructions from Jess below, thanks;)
