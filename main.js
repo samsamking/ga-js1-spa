@@ -240,6 +240,7 @@
 					</div>
 			</div>
 		`
+		
 		// declare variables		
 		var rating=1;
 		var maxRating = 5;
@@ -317,6 +318,7 @@
 				
 			});
 			
+			//set total to 0
 			starRatingTotal=0;
 			
 			// Reset the input value ready for a new item
@@ -416,6 +418,7 @@
 			firebase.database().ref(`tasks/${dataCaption}/comments/${key}/`).update({
 				done: event.delegateTarget.checked
 			});
+			
 		});
 		
 		// Whenever a new value is received from Firebase (once at initial page load,
@@ -605,6 +608,7 @@
 			  into.innerHTML= `
 			  	Leave a comment...
 			  `
+			  
 	}
 	
 	//render gold stars for each comment
