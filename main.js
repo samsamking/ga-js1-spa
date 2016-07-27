@@ -24,7 +24,6 @@
 	
 	firebase.initializeApp(config);   
 	
-	
 	//declare containers
 	var wrapper=document.querySelector(".wrapper");
 	var container = document.querySelector('#container');
@@ -49,48 +48,49 @@
 	if (state.accessToken ==false /* Did user authorize? */) {
 		renderLogin(state, container)
 	} else {	
-	//Make fetch calls here
-	fetch(instagramBasUrl +'users/self/media/recent/?access_token='+ state.accessToken)
-		.then((response)=>{
-			return response.json();
-		}).then((dataAsJson)=>{
-			dataAsJson.data.forEach((item) => {
-			//declare instagram data
-			var resultData = {
-				imageUrl: item.images.standard_resolution.url,
-				photoTime: item.created_time,
-				latitude: item.location.latitude,
-				longitude: item.location.longitude,
-				location: item.location.name,
-				caption:item.caption.text,
-				popup:false,
-			}
-			state.animals.push(resultData);
-				//fetch weather data when the images were loaded
-				fetch(forecastBasUrl +state.theDarkSkyForcastKey+"/"+resultData.latitude+", "+resultData.longitude+", "+resultData.photoTime)
-				.then((response)=>{
-					return response.json();
-				}).then((dataAsJson)=>{
-					resultData.weather=dataAsJson.currently.icon;
-					/*calling header*/
-					renderHeader(resultData, header)
-					
-					/*calling images*/
-					renderImages(resultData, container)
-					
-					/*calling image click function*/
-					clickImage (resultData)
-				})
+		//Make fetch calls here
+		fetch(instagramBasUrl +'users/self/media/recent/?access_token='+ state.accessToken)
+			.then((response)=>{
+				return response.json();
+			}).then((dataAsJson)=>{
+				dataAsJson.data.forEach((item) => {
+				//declare instagram data
+				var resultData = {
+					imageUrl: item.images.standard_resolution.url,
+					photoTime: item.created_time,
+					latitude: item.location.latitude,
+					longitude: item.location.longitude,
+					location: item.location.name,
+					caption:item.caption.text,
+					popup:false,
+				}
+				state.animals.push(resultData);
+					//fetch weather data when the images were loaded
+					fetch(forecastBasUrl +state.theDarkSkyForcastKey+"/"+resultData.latitude+", "+resultData.longitude+", "+resultData.photoTime)
+					.then((response)=>{
+						return response.json();
+					}).then((dataAsJson)=>{
+						resultData.weather=dataAsJson.currently.icon;
+						/*calling header*/
+						renderHeader(resultData, header)
+						
+						/*calling images*/
+						renderImages(resultData, container)
+						
+						/*calling image click function*/
+						clickImage (resultData)
+					})
+				});
+				
+			}).catch((err)=>{
+				console.log('Error!',err);
 			});
-			
-		}).catch((err)=>{
-			console.log('Error!',err);
-		});
 	}
 		
 	//declare functions
 	//render login
 	function renderLogin(data, into) {
+		
 		//Add the template
 		into.innerHTML=`
 		<h2>Lets login, shall we?</h2>
@@ -98,20 +98,24 @@
 		  <button type="submit">Login to Instagram</button>
 		</form>
 		`
+		
 	}
 	
 	/*render header*/	
 	function renderHeader(data, into){
+		
 		into.innerHTML = `
 			<section class="wrapper">
 			  <a href="#" class="home"><h1>Pick me, feed me and never leave me</h1></a>
 			  <div class="clearfix"></div>
 			</section>
 		`
+		
 	}
 	
 	//render all the images
 	function renderImages(data, into) {
+		
 		//declare variables
 		var weather=data.weather;
 		//remove the space inbetween words (for matching data-id and data purpose)
@@ -171,10 +175,12 @@
 				</div>
 			</div>
 		`
+		
 	}
 
 	//click image pop up function
 	function clickImage (data){
+		
 		/*click function on each image*/
 		delegate("body","click",".clickMe",(event) => {
 			
@@ -189,6 +195,7 @@
 			}
 			
 		});
+		
 	}
 	
 	// added the `data-id` attribute when we rendered the items
@@ -203,6 +210,7 @@
 		
 		// Extract and return that attribute
 		return closestItemWithId.getAttribute('data-id');
+		
 	}
 		
 	 /**
@@ -213,14 +221,17 @@
      * {Function} callback The callback to run on items in the collection
      */
     function iterate(collection, callback) {
+		
       for (var i = 0; i < collection.length; i++) {
         var item = collection[i];
         callback(item, i);
       }
+	  
     }
 
 	//render pop up
 	function renderPopup(data, into){
+		
 		into.innerHTML += `
 			<div id="pop-up">
 			<a href="#" class="close-pop-up">X</a>
@@ -242,7 +253,9 @@
 		
 		//render blank stars funtion, it has to stay here to get dataId
 		function renderBlankStar(into) {
+			
 			into.innerHTML += `<li data-id=${dataId} class="star" />`
+			
 		}
 		
 		//for loop to loop through ratings, and render pop up blank stars
@@ -263,6 +276,7 @@
 					item.classList.remove('selected');
 				}
 			});
+			
 		})	
 		
 		// Clicking to add a new item
@@ -288,16 +302,21 @@
 			
 			//update firebase data
 			firebase.database().ref(`tasks/${dataCaption}/comments/`).push({
+				
 				name: dataCaption,
 				comment: value,
 				done: false,  // Default all tasks to not-done
 				stars: rating,
+				
 			});
 			
 			//update firebase total rating data for each animal
 			firebase.database().ref(`tasks/${dataCaption}/totalRating/`).set({
+				
 				total:starRatingTotal + rating
+				
 			});
+			
 			starRatingTotal=0;
 			
 			// Reset the input value ready for a new item
@@ -315,6 +334,7 @@
 			
 			//get total rating/stars for each animal
 			firebase.database().ref(`tasks/${dataCaption}/totalRating/`).on('value', function(snapshot) {
+				
 				// Pull the totalRating value from firebase
 				totalRating = snapshot.val();
 				var totalRatingExists=snapshot.exists();
@@ -417,10 +437,8 @@
 			var starRatingArray=[];
 			clickedAnimal ={}
 			
-			
 			//if the data exists render the comment lists
 			if(exists){
-				
 				var stateComments=state.comments;
 				
 				// update the comments lists
@@ -452,6 +470,7 @@
 		
 	/*render each pop up item*/
 	function renderPopupItem(eachItemData){
+		
 		return `
 			<div class="imageLeftCol polaroid">
 				<img src=${eachItemData.imageUrl} />
@@ -470,10 +489,12 @@
 				</div>
 			</div>
 		`
+		
 	}	
 	
 	/*render input button area*/
 	function renderInput(){
+		
 		return `
 			<input type="text" id="new-item" />
 			<button id="add-button">Comment</button>
@@ -482,105 +503,105 @@
 				Leave a comment...
 			</ul>
 		`
+		
 	}	
 	
 	/*render total score*/
 	function renderTotalScore(state, into){
+		
 		var stateTotal=state.totalRating;
 		
-		if (stateTotal !== null || stateTotal !== 0){
-			into.innerHTML=	
-			Object.keys(stateTotal).map((key) => {
-				
-					var total=stateTotal[key];
-					
-					//change total score words and gifs based on the score gained
-					if (total <= 5){
-					return `<p>I have only ${total} stars, pick me please!</p>
-							<img src="images/pickMe.gif" alt="pick me" style="width:246px;height:205px;">
+		into.innerHTML=	
+		Object.keys(stateTotal).map((key) => {
+				var total=stateTotal[key];
+				//change total score words and gifs based on the score gained
+				if (total <= 5){
+				return `<p>I have only ${total} stars, pick me please!</p>
+						<img src="images/pickMe.gif" alt="pick me" style="width:246px;height:205px;">
+				`
+				}else if (total > 5 && total <=10){
+					return `<p>I have ${total} stars, want to see me dance?</p>
+							<img src="images/dancing.gif" alt="dance" style="width:250px;height:124px;">
 					`
-					}else if (total > 5 && total <=10){
-						return `<p>I have ${total} stars, want to see me dance?</p>
-								<img src="images/dancing.gif" alt="dance" style="width:250px;height:124px;">
-						`
-					}else if (total > 10 && total <=15){
-						return `<p>Yeehaa ${total} stars achieved, I need more to shine.</p>
-								<img src="images/shine.gif" alt="shine" style="width:250px;height:125px;">
-						`
-					}else if (total > 15 && total <=20){
-						return `<p>Yeah ${total} stars, I am running.</p>
-								<img src="images/running.gif" alt="running" style="width:256px;height:256px;">
-						`
-					}else if (total > 20 && total <=30){
-						return `<p>Woohoo ${total} stars, arent we better together?</p>
-								<img src="images/together.gif" alt="together" style="width:240px;height:135px;">
-						`
-					}else if (total > 30 && total <=40){
-						return `<p>Wow ${total} stars, love you.</p>
-								<img src="images/love.gif" alt="love" style="width:250px;height:198px;">
-						`
-					}else if (total > 40 && total <=50){
-						return `<p>I have ${total} stars, you made me smile.</p>
-								<img src="images/smile.gif" alt="smile" style="width:240px;height:132px;">
-						`
-					}else {
-						return `<p>I have ${total} stars, you made me a star!</p>
-								<img src="images/stars.gif" alt="star" style="width:250px;height:139px;">
-						`
-					}
-			}).join('')
-		}
+				}else if (total > 10 && total <=15){
+					return `<p>Yeehaa ${total} stars achieved, I need more to shine.</p>
+							<img src="images/shine.gif" alt="shine" style="width:250px;height:125px;">
+					`
+				}else if (total > 15 && total <=20){
+					return `<p>Yeah ${total} stars, I am running.</p>
+							<img src="images/running.gif" alt="running" style="width:256px;height:256px;">
+					`
+				}else if (total > 20 && total <=30){
+					return `<p>Woohoo ${total} stars, arent we better together?</p>
+							<img src="images/together.gif" alt="together" style="width:240px;height:135px;">
+					`
+				}else if (total > 30 && total <=40){
+					return `<p>Wow ${total} stars, love you.</p>
+							<img src="images/love.gif" alt="love" style="width:250px;height:198px;">
+					`
+				}else if (total > 40 && total <=50){
+					return `<p>I have ${total} stars, you made me smile.</p>
+							<img src="images/smile.gif" alt="smile" style="width:240px;height:132px;">
+					`
+				}else {
+					return `<p>I have ${total} stars, you made me a star!</p>
+							<img src="images/stars.gif" alt="star" style="width:250px;height:139px;">
+					`
+				}
+		}).join('')
+		
 	}
 	
 	//render 'leave a comment' if no comments
 	function renderEmptyTotalScore(into) {
-			  into.innerHTML= `
+		
+			  into.innerHTML= ` 
 			  `
+			  
 	}
 	
 	//render comments ul lists
 	function renderList(state, into) {
 		
-			// Iterate over each element in the object
-			if (state !== null){
-				var stateComments=state.comments;
-				
-				// get how many stars for each comment
-				into.innerHTML = 
-				Object.keys(stateComments).map((key) => {
-					var rating=stateComments[key].stars;
-					var maxRating = 5;
-					var output = ''
-					
-					// render how many gold stars after the committed comment
-					for (let i = 1; i <= rating; i++) {
-						output += renderCommentGoldStar()
-					}
-					
-					// render how many blank stars after the committed comment
-					for (let i = rating + 1; i <= maxRating; i++) {
-						output += renderCommentBlankStar()
-					}
-					
-					//create the comments list
-					return `
-					<li data-id="${key}">
-						<input class="done-it" type="checkbox" ${stateComments[key].done ? "checked" : ""} />
-						<div class="commentStarContainer">${output}</div>
-						${stateComments[key].comment}
-						<button class="delete">Delete</button>
-						<button class="update">Update</button>
-						<p class="instruction">Edit comment below, and click the update button</p>
-						<input type="text" class="edit-item shown"/>
-					</li>
-					`
-				}).join('');
+		// Iterate over each element in the object
+		var stateComments=state.comments;
+		
+		// get how many stars for each comment
+		into.innerHTML = 
+		Object.keys(stateComments).map((key) => {
+			var rating=stateComments[key].stars;
+			var maxRating = 5;
+			var output = ''
+			
+			// render how many gold stars after the committed comment
+			for (let i = 1; i <= rating; i++) {
+				output += renderCommentGoldStar()
 			}
+			
+			// render how many blank stars after the committed comment
+			for (let i = rating + 1; i <= maxRating; i++) {
+				output += renderCommentBlankStar()
+			}
+			
+			//create the comments list
+			return `
+			<li data-id="${key}">
+				<input class="done-it" type="checkbox" ${stateComments[key].done ? "checked" : ""} />
+				<div class="commentStarContainer">${output}</div>
+				${stateComments[key].comment}
+				<button class="delete">Delete</button>
+				<button class="update">Update</button>
+				<p class="instruction">Edit comment below, and click the update button</p>
+				<input type="text" class="edit-item shown"/>
+			</li>
+			`
+		}).join('');
 	
 	}
 	
 	//render 'leave a comment' if no comments
 	function renderEmptyList(into) {
+		
 			  into.innerHTML= `
 			  	Leave a comment...
 			  `
@@ -588,18 +609,24 @@
 	
 	//render gold stars for each comment
 	function renderCommentGoldStar() {
+		
 		return `<img src="images/yellowStarComment.png" />`
+		
 	}
 	
 	//render blank stars for each comment
 	function renderCommentBlankStar() {
+		
 		return `<img src="images/starComment.png" />`
+		
 	}
 	
 	/*close pop up*/
 	delegate("body","click",".close-pop-up",(event) => {
+		
 		var popupId=document.querySelector("#pop-up")
 		popupId.parentNode.removeChild(popupId);
+		
 	});
 		
 })();
