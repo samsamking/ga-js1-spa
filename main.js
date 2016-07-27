@@ -335,6 +335,11 @@
 				// Pull the data after some has been deleted from firebase
 				leftData = snapshot.val();
 				var leftDataExists=snapshot.exists();
+				
+				if(!leftData){
+					  leftData = {}
+				 }
+				 
 				//if there is comment data left after the last delete
 				if (leftDataExists){
 					var totalAddedStars=0;
@@ -399,9 +404,13 @@
 		
 			// Pull the value from firebase
 			state = snapshot.val();
+			if(!state){
+				  state = {}
+			 }
 			var exists=snapshot.exists();
 			var starRatingArray=[];
 			clickedAnimal ={}
+			
 			
 			//if the data exists render the comment lists
 			if(exists){

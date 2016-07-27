@@ -1,3 +1,103 @@
+## Unit Project #3: Single Page App
+
+This project is to build a web app by Sam, where I will use my Javascript knowledge and apply things I've learnt in the course.
+
+### What is my idea?
+
+Let's talk about the cute Animals, even better aussie animals. We are so lucky to have a huge range of native animals living here with us, they bring in tourists for us, they make money for us, they act cute just to make our life better, so there is no reason we don't protect them, some of them will be gone if we don't.
+
+That's where my idea came through, many individuals, companies, charities around the world would like to contribut money to those adorable Aussie animals, to love them, to save them, to feed them, however there are many needed animals, who do we choose each month? So it will be your money and your choice.
+
+Users can come to my SPA to make decisions on which animals they would like to protect this month, the top three will get the contributions from all those lovely people who voted.
+
+Those three has been helped this month won't be in the run for next month, to give others a fair chance, so everybody is a winner.
+
+
+### How does my SPA function?
+
+1. It fetches photos from a third-party - my instagram account, and the images will render in the page
+2. It will get names and where the animals are located
+3. Based on the location, it will tell you the weather in that location at the time (fetch data from a third party server - The Dark Sky Forecast API)
+4. Based on the weather received, it will change the weather into weather icons to be more visible/interesting
+5. When user clicks on each animal/image, a pop up of the clicked animal will show
+5. User can vote for the animal(s) they like with star ratings, and create a comment
+6. The voted stars and comment will show below for users to read
+6. User can edit comment(s) they submitted, also they can delete the comment(s) too
+7. Based on the total stars the animal got from the users' inpput, it will tell you how many scores the animal has got so far
+8. Different comments will present based on the total score scale and a related gif will show
+9. All the user interaction/comment data is stored in my Firebase
+10. The SPA is hosted on a third party server github https://samsamking.github.io/ga-js1-spa/
+
+
+3 technical hurdles
+Calculate total points based on the stars selected
+break into small pieces
+click on a class, there were multiple elements with the same class, so the only one got selected was the first one 
+couldn't get id/class
+/*click on star and add class*/
+    delegate("body","click",".star",(event) => {
+      
+      rating=parseInt(event.target.getAttribute('data-id'));
+      
+      iterate(starList, function(item, index) {
+        if (index < rating) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+    })  
+
+
+
+2 new things you learned
+
+Firebase
+//update firebase data
+      firebase.database().ref(`tasks/${dataCaption}/comments/`).push({
+        name: dataCaption,
+        comment: value,
+        done: false,  // Default all tasks to not-done
+        stars: rating,
+      });
+      
+      //update firebase total rating data for each animal
+      firebase.database().ref(`tasks/${dataCaption}/totalRating/`).set({
+        total:starRatingTotal + rating
+      });
+
+more understanding of Jess's code
+// Clicking to edit an item
+    delegate('.comment', 'click', '.update', (event) => {
+      
+      //declare variables
+    
+      var el=closest(event.delegateTarget,'[data-id]')
+      var id=el.getAttribute('data-id');
+      var newValue=el.querySelector(".edit-item").value;
+   
+      
+    });
+    
+
+function iterate(collection, callback) {
+      for (var i = 0; i < collection.length; i++) {
+        var item = collection[i];
+        callback(item, i);
+      }
+    }
+
+    more planning for further projects
+
+what you'd like to do next with your app.
+1. Move all the instagram photos to be based in Firebase, so I have more control of the data
+2. Render the home page based on the total rating scores, the score data is in the Firebase already
+
+
+
+
+
+
 # ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png) Unit Project #3: Single Page App
 
 For the final project, you'll be designing and building a web app of your
