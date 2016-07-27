@@ -407,6 +407,12 @@
 			if(!state){
 				  state = {}
 			 }
+			 if(!state.comments){
+				  state.comments = {}
+			 }
+			 if(!state.totalRating){
+				  state.totalRating = {}
+			 }
 			var exists=snapshot.exists();
 			var starRatingArray=[];
 			clickedAnimal ={}
