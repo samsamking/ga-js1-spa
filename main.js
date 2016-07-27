@@ -169,7 +169,7 @@
 				  <div class="rightCol">
 					<ul class="ulClass">
 						<li>Where: ${data.location}</li>
-						<li>Description: ${data.caption}</li>
+						<li>Name: ${data.caption}</li>
 					</ul>
 				  </div>
 				</div>
@@ -215,10 +215,7 @@
 		
 	 /**
      * iterate
-     * A simple iterator used to loop over the stars collection.
-     * Returns nothing.
-     * {Array} collection The collection to be iterated
-     * {Function} callback The callback to run on items in the collection
+     * A simple iterator used to loop over the stars collection
      */
     function iterate(collection, callback) {
 		
@@ -265,7 +262,7 @@
 			renderBlankStar(starContainer)
 		}
 		
-		/*click on star and add class*/
+		/*click on star and add selected class*/
 		delegate("body","click",".star",(event) => {
 			
 			rating=parseInt(event.target.getAttribute('data-id'));
@@ -306,8 +303,8 @@
 				
 				name: dataCaption,
 				comment: value,
-				done: false,  // Default all tasks to not-done
-				stars: rating,
+				done: false,  // Default all tasks to not-done, not needed atm
+				stars: rating
 				
 			});
 			
@@ -318,7 +315,7 @@
 				
 			});
 			
-			//set total to 0
+			//set total to 0 again
 			starRatingTotal=0;
 			
 			// Reset the input value ready for a new item
@@ -358,11 +355,12 @@
 				leftData = snapshot.val();
 				var leftDataExists=snapshot.exists();
 				
+				//if no data set it to {}
 				if(!leftData){
 					  leftData = {}
 				 }
 				 
-				//if there is comment data left after the last delete
+				//if there is comment data left
 				if (leftDataExists){
 					var totalAddedStars=0;
 					Object.keys(leftData).map((key) => {
@@ -409,7 +407,7 @@
 			
 		});
 		
-		// Clicking to do / undo an item
+		// Clicking to do / undo an item, this is not needed atm, maybe in the future
 		delegate('.comment', 'click', '.done-it', (event) => {
 		
 			let key = getKeyFromClosestElement(event.delegateTarget);
@@ -427,18 +425,20 @@
 		
 			// Pull the value from firebase
 			state = snapshot.val();
-			if(!state){
-				  state = {}
-			 }
-			 if(!state.comments){
-				  state.comments = {}
-			 }
-			 if(!state.totalRating){
-				  state.totalRating = {}
-			 }
 			var exists=snapshot.exists();
 			var starRatingArray=[];
 			clickedAnimal ={}
+			
+			// if there is no data, set {}
+			if(!state){
+			  state = {}
+			}
+			if(!state.comments){
+			  state.comments = {}
+			}
+			if(!state.totalRating){
+			  state.totalRating = {}
+			}
 			
 			//if the data exists render the comment lists
 			if(exists){
@@ -464,7 +464,7 @@
 				renderEmptyList(ulContainer);
 			}			
 			
-			//set rating to 0 to start again
+			//set rating to 0 again
 			rating=0;
 			
 		});
